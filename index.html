@@ -18,21 +18,26 @@
         }
         .container {
             width: 90%;
-            max-width: 350px;
+            max-width: 400px;
             background: white;
-            padding: 15px;
+            padding: 10px;
             border-radius: 10px;
             box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-            margin: 10px 0;
+            margin: 5px;
+            text-align: center;
+        }
+        .input-group {
+            display: flex;
+            justify-content: space-between;
+            gap: 5px;
         }
         input, button {
-            width: calc(100% - 20px);
-            margin: 5px 0;
-            padding: 10px;
+            padding: 8px;
             font-size: 14px;
-            display: block;
-            margin-left: auto;
-            margin-right: auto;
+            text-align: center;
+        }
+        .input-group input {
+            flex: 1;
         }
         button {
             background-color: #007BFF;
@@ -40,100 +45,72 @@
             border: none;
             cursor: pointer;
             border-radius: 5px;
+            width: 100%;
         }
         button:hover {
             background-color: #0056b3;
         }
+        .result-box {
+            border: 2px solid #007BFF;
+            padding: 10px;
+            margin-top: 10px;
+            border-radius: 5px;
+        }
         .result {
-            font-size: 14px;
+            font-size: 16px;
             font-weight: bold;
             margin-top: 5px;
-        }
-        .wrapper {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
         }
     </style>
 </head>
 <body>
-    <div class="wrapper">
-        <div class="container">
-            <h2>標準偏差を計算</h2>
-            <label for="score">得点：</label>
-            <input type="number" id="score" placeholder="例: 90">
-            
-            <label for="mean">平均点：</label>
-            <input type="number" id="mean" placeholder="例: 61.6">
-            
-            <label for="deviation">偏差値：</label>
-            <input type="number" id="deviation" placeholder="例: 70.4">
-            
-            <button onclick="calculateStandardDeviation()">標準偏差を計算</button>
-            <p class="result" id="stdResult"></p>
+    <div class="container">
+        <h2>標準偏差を計算</h2>
+        <div class="input-group">
+            <input type="number" id="score" placeholder="得点">
+            <input type="number" id="mean" placeholder="平均点">
+            <input type="number" id="deviation" placeholder="偏差値">
+        </div>
+        <button onclick="calculateAll()">計算する</button>
+        
+        <div class="result-box">
+            <p>標準偏差</p>
+            <p class="result" id="stdResult">-</p>
         </div>
 
-        <div class="container">
-            <h2>仮の得点で偏差値予測</h2>
-            <label for="targetScore">仮の得点：</label>
-            <input type="number" id="targetScore" placeholder="例: 80">
-            
-            <button onclick="calculatePredictedDeviationScore()">偏差値を予測</button>
-            <p class="result" id="predictedDevResult"></p>
+        <div class="result-box">
+            <p>このテストで〇〇点だったら…</p>
+            <p class="result" id="predictedDevResult">偏差値 約-</p>
         </div>
 
-        <div class="container">
-            <h2>偏差値を〇〇点上げるには</h2>
-            <label for="increaseDeviation">上げたい偏差値：</label>
-            <input type="number" id="increaseDeviation" placeholder="例: 5">
-            
-            <button onclick="calculateRequiredScore()">必要点数を計算</button>
-            <p class="result" id="requiredScoreResult"></p>
+        <div class="result-box">
+            <p>このテストで偏差値を〇〇上げるなら</p>
+            <p class="result" id="requiredScoreResult">〇〇点必要でした</p>
         </div>
     </div>
 
     <script>
-        function calculateStandardDeviation() {
+        function calculateAll() {
             let score = parseFloat(document.getElementById("score").value);
             let mean = parseFloat(document.getElementById("mean").value);
             let deviation = parseFloat(document.getElementById("deviation").value);
-
             if (isNaN(score) || isNaN(mean) || isNaN(deviation)) {
-                document.getElementById("stdResult").innerText = "正しい数値を入力してください。";
+                document.getElementById("stdResult").innerText = "-";
+                document.getElementById("predictedDevResult").innerText = "偏差値 約-";
+                document.getElementById("requiredScoreResult").innerText = "〇〇点必要でした";
                 return;
             }
 
             let stdDev = (score - mean) / ((deviation - 50) / 10);
-            document.getElementById("stdResult").innerText = `標準偏差: ${stdDev.toFixed(2)}`;
-        }
+            document.getElementById("stdResult").innerText = stdDev.toFixed(2);
 
-        function calculatePredictedDeviationScore() {
-            let mean = parseFloat(document.getElementById("mean").value);
-            let std = parseFloat(document.getElementById("stdResult").innerText.split(': ')[1]);
-            let targetScore = parseFloat(document.getElementById("targetScore").value);
+            let targetScore = score; 
+            let predictedDeviationScore = 50 + ((targetScore - mean) * 10 / stdDev);
+            document.getElementById("predictedDevResult").innerText = `偏差値 約${predictedDeviationScore.toFixed(2)}`;
 
-            if (isNaN(mean) || isNaN(std) || isNaN(targetScore)) {
-                document.getElementById("predictedDevResult").innerText = "正しい数値を入力してください。";
-                return;
-            }
-
-            let predictedDeviationScore = 50 + ((targetScore - mean) * 10 / std);
-            document.getElementById("predictedDevResult").innerText = `仮に ${targetScore} 点なら偏差値 ${predictedDeviationScore.toFixed(2)}`;
-        }
-
-        function calculateRequiredScore() {
-            let mean = parseFloat(document.getElementById("mean").value);
-            let std = parseFloat(document.getElementById("stdResult").innerText.split(': ')[1]);
-            let increaseDeviation = parseFloat(document.getElementById("increaseDeviation").value);
-            let currentDeviation = parseFloat(document.getElementById("deviation").value);
-
-            if (isNaN(mean) || isNaN(std) || isNaN(increaseDeviation) || isNaN(currentDeviation)) {
-                document.getElementById("requiredScoreResult").innerText = "正しい数値を入力してください。";
-                return;
-            }
-
-            let requiredScore = mean + ((currentDeviation + increaseDeviation - 50) * std / 10);
-            document.getElementById("requiredScoreResult").innerText = `偏差値を ${increaseDeviation} 点上げるには ${requiredScore.toFixed(2)} 点必要です。`;
+            let increaseDeviation = 5; 
+            let requiredScore = mean + ((deviation + increaseDeviation - 50) * stdDev / 10);
+            document.getElementById("requiredScoreResult").innerText = `${requiredScore.toFixed(2)} 点必要でした`;
         }
     </script>
 </body>
