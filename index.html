@@ -36,9 +36,15 @@
             padding: 5px;
             border-radius: 5px;
             background-color: #eef5ff;
+            flex: 1;
+        }
+        label {
+            font-size: 14px;
+            display: block;
+            margin-bottom: 3px;
         }
         input {
-            width: 30%;
+            width: 100%;
             padding: 8px;
             font-size: 14px;
             text-align: center;
@@ -55,6 +61,7 @@
             width: 100%;
             padding: 10px;
             margin-top: 10px;
+            font-size: 16px;
         }
         button:hover {
             background-color: #0056b3;
@@ -66,6 +73,8 @@
             border-radius: 5px;
             font-size: 16px;
             background-color: #eef5ff;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
         }
         h2 {
             font-size: 18px;
@@ -78,9 +87,18 @@
         <div class="result-box">
             <h2>標準偏差を計算</h2>
             <div class="input-group">
-                <div class="input-box"><input type="number" id="score" placeholder="得点"></div>
-                <div class="input-box"><input type="number" id="mean" placeholder="平均点"></div>
-                <div class="input-box"><input type="number" id="deviation" placeholder="偏差値"></div>
+                <div class="input-box">
+                    <label for="score">得点</label>
+                    <input type="number" id="score" placeholder="例: 90">
+                </div>
+                <div class="input-box">
+                    <label for="mean">平均点</label>
+                    <input type="number" id="mean" placeholder="例: 60">
+                </div>
+                <div class="input-box">
+                    <label for="deviation">偏差値</label>
+                    <input type="number" id="deviation" placeholder="例: 50">
+                </div>
             </div>
             <button onclick="calculateAll()">計算する</button>
             <p>この模試の標準偏差は… <span id="stdResult">-</span> でした</p>
@@ -116,7 +134,10 @@
             let predictedDeviationScore = 50 + ((score - mean) * 10 / stdDev);
             document.getElementById("predictedDevResult").innerText = `偏差値 約${predictedDeviationScore.toFixed(2)}`;
 
-            let increaseDeviation = 5;
+            let increaseDeviation = parseFloat(prompt("偏差値を何点上げたいですか？", "5"));
+            if (isNaN(increaseDeviation)) {
+                increaseDeviation = 5;
+            }
             document.getElementById("userDeviation").innerText = increaseDeviation;
             let requiredScore = mean + ((deviation + increaseDeviation - 50) * stdDev / 10);
             document.getElementById("requiredScoreResult").innerText = `${requiredScore.toFixed(2)} 点`;
