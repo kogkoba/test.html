@@ -152,13 +152,15 @@
             let mean = parseFloat(document.getElementById("mean").value);
             let stdDev = parseFloat(document.getElementById("stdDevResult").innerText);
             let increaseDeviation = parseFloat(document.getElementById("increaseDeviation").value);
+            let currentDeviation = parseFloat(document.getElementById("deviation").value);
             
-            if (isNaN(mean) || isNaN(stdDev) || isNaN(increaseDeviation)) {
+            if (isNaN(mean) || isNaN(stdDev) || isNaN(increaseDeviation) || isNaN(currentDeviation)) {
                 document.getElementById("requiredScoreResult").innerText = "-";
                 return;
             }
             
-            let requiredScore = mean + (((50 + increaseDeviation) - 50) / 10) * stdDev;
+            let targetDeviation = currentDeviation + increaseDeviation;
+            let requiredScore = mean + ((targetDeviation - 50) / 10) * stdDev;
             document.getElementById("requiredScoreResult").innerText = requiredScore.toFixed(2) + " 点";
         }
     </script>
